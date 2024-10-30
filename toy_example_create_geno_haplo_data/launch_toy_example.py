@@ -1,14 +1,20 @@
+import subprocess
 import os
 
-# Chemin vers le fichier parameters.txt
-parameters_file = "~/Documents/projet_AHONDO_TCHATAKOURA/script/parameters.txt"
+# Spécifiez les chemins des fichiers
+parameters_file = os.path.expanduser("~/Documents/projet_AHONDO_TCHATAKOURA/script/parameters.txt")
+genotypes_file = os.path.expanduser("~/Documents/projet_AHONDO_TCHATAKOURA/script/genotypes.csv")
+haplotypes_file = os.path.expanduser("~/Documents/projet_AHONDO_TCHATAKOURA/script/haplotypes.csv")
 
-# Chemin vers les fichiers de sortie pour les génotypes et haplotypes
-genotypes_file = "~/Documents/projet_AHONDO_TCHATAKOURA/script/genotypes.csv"
-haplotypes_file = "~/Documents/projet_AHONDO_TCHATAKOURA/script/haplotypes.csv"
+# Chemin vers le fichier C++
+cpp_file = os.path.expanduser("~/Documents/projet_AHONDO_TCHATAKOURA/script/create_geno_haplo_data.cpp")
 
-# Ligne de commande pour exécuter create_geno_haplo_data avec les arguments
-command = f"./create_geno_haplo_data {parameters_file} {genotypes_file} {haplotypes_file}"
+# Commande pour compiler le programme C++
+compile_command = f'g++ -o create_geno_haplo_data {cpp_file}'
 
-# Exécuter la commande dans le shell
-os.system(command)
+# Exécution de la commande de compilation
+subprocess.run(compile_command, shell=True, check=True)
+
+# Exécuter le programme compilé
+run_command = f'./create_geno_haplo_data {parameters_file} {genotypes_file} {haplotypes_file}'
+subprocess.run(run_command, shell=True, check=True)

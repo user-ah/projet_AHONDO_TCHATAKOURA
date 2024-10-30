@@ -1,0 +1,7 @@
+// number of individuals
+n_ind 10
+// number of loci
+n_loci 5
+// number of haplotypes in the population of individuals
+n_distinct_haplo 3
+
