@@ -29,8 +29,8 @@ void read_parameters(const string& filepath, int& n_ind, int& n_loci, int& n_dis
 // Fonction pour générer des haplotypes aléatoires
 vector<vector<int>> generate_haplotypes(int n_ind, int n_loci, int n_distinct_haplo) {
     vector<vector<int>> distinct_haplotypes;
-    
-    // Générer des haplotypes distincts
+
+    // Génération des haplotypes distincts avec un certain contrôle de variation
     for (int i = 0; i < n_distinct_haplo; ++i) {
         vector<int> haplotype;
         for (int j = 0; j < n_loci; ++j) {
@@ -39,13 +39,36 @@ vector<vector<int>> generate_haplotypes(int n_ind, int n_loci, int n_distinct_ha
         distinct_haplotypes.push_back(haplotype);
     }
 
-    // Assignation aléatoire des haplotypes
     vector<vector<int>> haplotypes;
+
+    // Génération de paires d'haplotypes en maximisant leur similarité
     for (int i = 0; i < n_ind; ++i) {
         int haplo1_idx = rand() % n_distinct_haplo;
         int haplo2_idx = rand() % n_distinct_haplo;
-        haplotypes.push_back(distinct_haplotypes[haplo1_idx]);
-        haplotypes.push_back(distinct_haplotypes[haplo2_idx]);
+
+        // Ajout d'une logique pour choisir des haplotypes plus similaires
+        vector<int> haplo1 = distinct_haplotypes[haplo1_idx];
+        vector<int> haplo2 = haplo1;  // Par défaut, haplo2 est identique à haplo1
+
+        // Si on veut introduire une variation, modifier seulement quelques loci
+        if (haplo1_idx != haplo2_idx) {
+            haplo2 = distinct_haplotypes[haplo2_idx];
+            int max_differences = n_loci / 4;  // Limite les différences à 25% des loci
+
+            int diff_count = 0;
+            for (int j = 0; j < n_loci; ++j) {
+                // Appliquer une différence seulement si le nombre maximum de différences n'est pas atteint
+                if (haplo1[j] != haplo2[j]) {
+                    ++diff_count;
+                    if (diff_count > max_differences) {
+                        haplo2[j] = haplo1[j];  // Aligne les allèles pour éviter une différence
+                    }
+                }
+            }
+        }
+
+        haplotypes.push_back(haplo1);
+        haplotypes.push_back(haplo2);
     }
 
     return haplotypes;
