@@ -1,0 +1,4 @@
+n_distinct_haplo (référence): 11
+n_distinct_haplo (inféré): 12
+Distance entre haplotypes de référence et inférés: 12
+Durée d'exécution: 0.08 secondes
