@@ -27,8 +27,8 @@ void read_parameters(const string& filepath, int& n_ind, int& n_loci, int& n_dis
 }
 
 // Fonction pour générer des haplotypes aléatoires
-vector<vector<int>> generate_haplotypes(int n_ind, int n_loci, int n_distinct_haplo) {
-    vector<vector<int>> distinct_haplotypes;
+vector< vector<int> > generate_haplotypes(int n_ind, int n_loci, int n_distinct_haplo) {
+    vector< vector<int> > distinct_haplotypes;
 
     // Génération des haplotypes distincts avec un certain contrôle de variation
     for (int i = 0; i < n_distinct_haplo; ++i) {
@@ -39,7 +39,7 @@ vector<vector<int>> generate_haplotypes(int n_ind, int n_loci, int n_distinct_ha
         distinct_haplotypes.push_back(haplotype);
     }
 
-    vector<vector<int>> haplotypes;
+    vector< vector<int> > haplotypes;
 
     // Génération de paires d'haplotypes en maximisant leur similarité
     for (int i = 0; i < n_ind; ++i) {
@@ -75,8 +75,8 @@ vector<vector<int>> generate_haplotypes(int n_ind, int n_loci, int n_distinct_ha
 }
 
 // Fonction pour générer des génotypes à partir des haplotypes
-vector<vector<int>> generate_genotypes(const vector<vector<int>>& haplotypes, int n_loci) {
-    vector<vector<int>> genotypes;
+vector< vector<int> > generate_genotypes(const vector< vector<int> >& haplotypes, int n_loci) {
+    vector< vector<int> > genotypes;
 
     for (size_t i = 0; i < haplotypes.size(); i += 2) {
         vector<int> genotype;
@@ -99,7 +99,7 @@ vector<vector<int>> generate_genotypes(const vector<vector<int>>& haplotypes, in
 }
 
 // Fonction pour sauvegarder un fichier CSV
-void save_csv(const string& filename, const  vector< vector<int>>& data) {
+void save_csv(const string& filename, const  vector< vector<int> >& data) {
      ofstream file(filename);
     
     for (const auto& row : data) {
@@ -135,8 +135,8 @@ int main(int argc, char* argv[]) {
     read_parameters(param_file, n_ind, n_loci, n_distinct_haplo);
 
     // Génération des haplotypes et génotypes
-     vector< vector<int>> haplotypes = generate_haplotypes(n_ind, n_loci, n_distinct_haplo);
-     vector< vector<int>> genotypes = generate_genotypes(haplotypes, n_loci);
+     vector< vector<int> > haplotypes = generate_haplotypes(n_ind, n_loci, n_distinct_haplo);
+     vector< vector<int> > genotypes = generate_genotypes(haplotypes, n_loci);
 
     // Sauvegarde des fichiers CSV
     save_csv(haplo_file, haplotypes);

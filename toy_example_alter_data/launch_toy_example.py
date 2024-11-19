@@ -11,7 +11,7 @@ cpp_file = "../src/alter_data.cpp"
 executable = "../src/alter_data"  # L'exécutable après compilation
 
 # Commande de compilation pour le fichier C++
-compile_command = f"g++ -o {executable} {cpp_file}"
+compile_command = f"g++ -std=c++11 -o {executable} {cpp_file}"
 
 # Vérification de la compilation
 try:
