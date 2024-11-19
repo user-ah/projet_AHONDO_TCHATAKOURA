@@ -1,9 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
 #include <cmath>
 #include <chrono>
-#include "parameters.h"               
 #include "genotype_reader.h"         
 #include "initialisation_frequences.h"
 #include "calcul_proba_genotypes.h"
@@ -18,6 +18,35 @@
 using namespace std;
 using namespace std::chrono;
 
+// Fonction pour générer le fichier parameters.txt
+void generateParameters(const string& genotypes_file, const string& parameters_file, int& n_ind, int& n_loci) {
+    vector<vector<int>> genotypes;
+
+    // Lecture des données de génotypes
+    if (!readGenotypeFile(genotypes_file, genotypes, n_ind, n_loci)) {
+        throw runtime_error("Impossible de lire le fichier de génotypes.");
+    }
+
+    // Calcul du nombre d'individus et de loci
+    n_ind = genotypes.size();
+    n_loci = genotypes.empty() ? 0 : genotypes[0].size();
+
+    // Calcul du nombre d'haplotypes distincts
+    int n_distinct_haplo = countDistinctHaplotypes(genotypes);
+
+    // Écriture des paramètres dans parameters.txt
+    ofstream params_out(parameters_file);
+    if (!params_out) {
+        throw runtime_error("Impossible d'écrire le fichier parameters.txt.");
+    }
+
+    params_out << "// number of individuals\nn_ind " << n_ind << "\n";
+    params_out << "// number of loci\nn_loci " << n_loci << "\n";
+    params_out << "// number of haplotypes in the population of individuals\nn_distinct_haplo " << n_distinct_haplo << "\n";
+
+    params_out.close();
+}
+
 int main(int argc, char* argv[]) {
     if (argc != 5) {
         cerr << "Usage: " << argv[0] << " <parameters.txt> <genotypes.csv> <haplotypes.csv> <log.txt>" << endl;
@@ -26,21 +55,24 @@ int main(int argc, char* argv[]) {
 
     // Récupération des arguments de fichier
     string parameters_file = argv[1];
-    string genotypes_file = "../data/genotypes.csv";
-    string haplotypes_file = "../data/haplotypes.csv";
+    string genotypes_file = argv[2];
+    string haplotypes_file = argv[3];
     string log_file = argv[4];
 
-    // Lecture des paramètres dans parameters.txt
-    Parameters params = readParameters(parameters_file);  
+    // Génération de parameters.txt à partir de genotypes.csv
+    int n_ind, n_loci;
+    try {
+        generateParameters(genotypes_file, parameters_file, n_ind, n_loci);
+    } catch (const exception& e) {
+        cerr << e.what() << endl;
+        return 1;
+    }
 
-    int n_ind = params.n_ind;    // Nombre d'individus
-    int n_loci = params.n_loci;   // Nombre de loci par individu
+    cout << "Fichier " << parameters_file << " généré avec succès." << endl;
     cout << "Nombre d'individus (n_ind) : " << n_ind << endl;
     cout << "Nombre de loci (n_loci) : " << n_loci << endl;
 
-
-
-    // Lecture du fichier genotypes.csv pour récupérer les données de génotypes
+    // Lecture des génotypes
     vector<vector<int>> genotypes;
     if (!readGenotypeFile(genotypes_file, genotypes, n_ind, n_loci)) {
         cerr << "Échec de la lecture du fichier de génotypes." << endl;
