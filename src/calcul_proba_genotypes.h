@@ -3,6 +3,7 @@
 #define CALCUL_PROBA_GENOTYPES_H
 
 #include <vector>
+using namespace std;
 
 /**
  * Calcule la probabilité de chaque génotype en fonction des fréquences des paires d'haplotypes possibles.
@@ -11,7 +12,7 @@
  * @param haplotype_frequencies Un vecteur de fréquences des haplotypes.
  * @param genotype_probabilities Un vecteur pour stocker les probabilités calculées pour chaque génotype.
  */
-void calcul_proba_genotypes(const std::vector<std::vector<int>> &genotypes, 
+inline void calcul_proba_genotypes(const std::vector<std::vector<int>> &genotypes, 
                             const std::vector<double> &haplotype_frequencies, 
                             std::vector<double> &genotype_probabilities) {
     genotype_probabilities.clear();

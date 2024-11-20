@@ -4,6 +4,7 @@
 
 #include <string>
 #include <fstream>
+#include <iostream>
 
 /**
  * Écrit les informations de log dans un fichier.
@@ -14,7 +15,7 @@
  * @param distance La distance entre les haplotypes de référence et inférés.
  * @param duration Durée d'exécution de l'algorithme d'inférence.
  */
-void writeLog(const std::string &log_file,
+inline void writeLog(const std::string &log_file,
               int n_distinct_ground_truth,
               int n_distinct_inferred,
               int distance,

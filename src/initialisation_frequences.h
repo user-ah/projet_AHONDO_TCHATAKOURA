@@ -11,7 +11,7 @@
  * @param haplotype_frequencies Un vecteur pour stocker les fréquences des haplotypes.
  * @param nb_haplotypes Le nombre total d'haplotypes possibles.
  */
-void initialisation_frequences_haplotypes(std::vector<double> &haplotype_frequencies, int nb_haplotypes) {
+inline void initialisation_frequences_haplotypes(std::vector<double> &haplotype_frequencies, int nb_haplotypes) {
     double initial_freq = 1.0 / nb_haplotypes;  // Fréquence uniforme pour chaque haplotype
     haplotype_frequencies.assign(nb_haplotypes, initial_freq);
     std::cout << "Fréquences des haplotypes initialisées à " << initial_freq << " pour chaque haplotype." << std::endl;

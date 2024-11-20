@@ -3,6 +3,7 @@
 #define MAXIMISATION_H
 
 #include <vector>
+using namespace std;
 
 /**
  * Met à jour les fréquences des haplotypes en fonction des génotypes observés et de leurs probabilités.
@@ -20,7 +21,7 @@
  * @param genotype_probabilities Les probabilités des génotypes pour l'étape précédente.
  * @param n_ind Le nombre total d'individus.
  */
-void maximisation(const std::vector<std::vector<int>> &genotypes, 
+inline void maximisation(const std::vector<std::vector<int>> &genotypes, 
                   std::vector<double> &haplotype_frequencies, 
                   const std::vector<double> &genotype_probabilities, 
                   int n_ind) {
