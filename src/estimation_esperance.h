@@ -19,7 +19,7 @@
  * @param haplotype_frequencies Les fréquences actuelles des haplotypes.
  * @return double La valeur du log-vraisemblance calculée.
  */
-double estimation_esperance(const std::vector<std::vector<int>> &genotypes, 
+inline double estimation_esperance(const std::vector<std::vector<int>> &genotypes, 
                             const std::vector<double> &haplotype_frequencies) {
     double loglikelihood = 0.0;
 

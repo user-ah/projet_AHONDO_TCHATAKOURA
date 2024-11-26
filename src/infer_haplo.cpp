@@ -42,8 +42,7 @@ void generateParameters(const string& genotypes_file, const string& parameters_f
 
     params_out << "// number of individuals\nn_ind " << n_ind << "\n";
     params_out << "// number of loci\nn_loci " << n_loci << "\n";
-    params_out << "// number of haplotypes in the population of individuals\nn_distinct_haplo " << n_distinct_haplo << "\n";
-
+    
     params_out.close();
 }
 
