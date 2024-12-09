@@ -104,20 +104,14 @@ HaploList removeDuplicates(const HaploList& haplotypes) {
 // Initialiser les fréquences uniformes
 HaploFreqMap initializeFrequencies(const HaploList& haplotypes) {
     HaploFreqMap frequencies;
-    double uniform_frequency = 1.0 / (2 * haplotypes.size());
+    double initial_frequency = 1.0 / haplotypes.size();  // Fréquence uniforme
 
-    for (const auto& pair : haplotypes) {
-        const Haplotype& h1 = pair.first;
-        const Haplotype& h2 = pair.second;
+    for (const auto& haplo_pair : haplotypes) {
+        const auto& h1 = haplo_pair.first;
+        const auto& h2 = haplo_pair.second;
 
-        if (frequencies.count(h1) == 0) {
-            frequencies[h1] = 0.0;
-        }
-        if (frequencies.count(h2) == 0) {
-            frequencies[h2] = 0.0;
-        }
-        frequencies[h1] += uniform_frequency;
-        frequencies[h2] += uniform_frequency;
+        frequencies[h1] += initial_frequency;
+        frequencies[h2] += initial_frequency;
     }
 
     return frequencies;
@@ -127,7 +121,6 @@ HaploFreqMap initializeFrequencies(const HaploList& haplotypes) {
 std::vector<std::pair<Haplotype, double>> sortHaplotypeFrequencies(const HaploFreqMap& haplo_freq) {
     std::vector<std::pair<Haplotype, double>> sorted_haplotypes(haplo_freq.begin(), haplo_freq.end());
 
-    // Trier par fréquence décroissante
     std::sort(sorted_haplotypes.begin(), sorted_haplotypes.end(),
               [](const std::pair<Haplotype, double>& a, const std::pair<Haplotype, double>& b) {
                   return a.second > b.second;
@@ -156,6 +149,56 @@ void writeHaplotypeFrequenciesToFile(const std::vector<std::pair<Haplotype, doub
     std::cout << "Les haplotypes triés ont été sauvegardés dans le fichier : " << filename << std::endl;
 }
 
+// Associer les génotypes aux haplotypes explicatifs
+void associateGenotypesWithHaplotypes(
+    const std::vector<std::vector<int>>& genotypes,
+    const HaploFreqMap& inferred_haplotypes,
+    const std::string& filename
+) {
+    std::ofstream outFile(filename);
+    if (!outFile.is_open()) {
+        std::cerr << "Erreur : Impossible d'ouvrir le fichier " << filename << " pour écrire." << std::endl;
+        return;
+    }
+
+    for (const auto& genotype : genotypes) {
+        outFile << "Genotype: ";
+        for (int val : genotype) {
+            outFile << val << " ";
+        }
+        outFile << "-> Haplotype Pairs: ";
+
+        HaploList genotype_haplotypes = generateHaplotypes(genotype);
+
+        bool first_pair = true;
+        for (const auto& haplo_pair : genotype_haplotypes) {
+            const auto& h1 = haplo_pair.first;
+            const auto& h2 = haplo_pair.second;
+
+            if (inferred_haplotypes.count(h1) > 0 && inferred_haplotypes.count(h2) > 0) {
+                if (!first_pair) {
+                    outFile << "; ";
+                }
+                outFile << "(";
+                for (int val : h1) {
+                    outFile << val << " ";
+                }
+                outFile << ", ";
+                for (int val : h2) {
+                    outFile << val << " ";
+                }
+                outFile << ")";
+                first_pair = false;
+            }
+        }
+
+        outFile << std::endl;
+    }
+
+    outFile.close();
+    std::cout << "Les associations génotypes-haplotypes ont été sauvegardées dans le fichier : " << filename << std::endl;
+}
+
 // Maximisation de l'algorithme EM
 void maximisation(
     const HaploFreqMap& freq_prec,
@@ -166,10 +209,9 @@ void maximisation(
     double seuil,
     int max_iter
 ) {
-    double diff = seuil + 1.0; // Initialiser diff à une valeur plus grande que le seuil
+    double diff = seuil + 1.0;
     int iteration = 0;
 
-    // Initialiser new_freq avec des zéros
     for (const auto& [h, freq] : freq_prec) {
         new_freq[h] = 0.0;
     }
@@ -178,7 +220,6 @@ void maximisation(
         iteration++;
         diff = 0.0;
 
-        // Réinitialiser new_freq à zéro
         for (auto& [h, freq] : new_freq) {
             freq = 0.0;
         }
@@ -202,7 +243,6 @@ void maximisation(
             }
         }
 
-        // Calculer la différence maximale
         for (const auto& [h, freq] : new_freq) {
             if (std::fabs(freq - freq_prec.at(h)) > diff) {
                 diff = std::fabs(freq - freq_prec.at(h));
@@ -213,33 +253,27 @@ void maximisation(
 
 int main() {
     try {
-        // Lire les génotypes depuis un fichier
         std::vector<std::vector<int>> genotypes = readGenotypesFromCSV("genotypes.csv");
 
-        // Générer les paires d'haplotypes possibles pour chaque génotype
         HaploList haplotypes;
         for (const auto& genotype : genotypes) {
             HaploList genotype_haplotypes = generateHaplotypes(genotype);
             haplotypes.insert(haplotypes.end(), genotype_haplotypes.begin(), genotype_haplotypes.end());
         }
 
-        // Retirer les doublons des paires d'haplotypes
         HaploList unique_haplotypes = removeDuplicates(haplotypes);
 
-        // Initialiser les fréquences des haplotypes
         HaploFreqMap frequencies = initializeFrequencies(unique_haplotypes);
 
-        // Maximisation (EM)
         HaploFreqMap new_freq;
         maximisation(frequencies, {}, {}, genotypes.size(), new_freq, 1e-3, 100);
 
-        // Trier les haplotypes par fréquence décroissante
         auto sorted_haplotypes = sortHaplotypeFrequencies(new_freq);
 
-        // Sauvegarder les haplotypes triés dans un fichier
         writeHaplotypeFrequenciesToFile(sorted_haplotypes, "haplotype_frequencies.txt");
 
-        // Afficher les haplotypes triés
+        associateGenotypesWithHaplotypes(genotypes, new_freq, "genotype_haplotype_associations.txt");
+
         std::cout << "Haplotypes triés par fréquence décroissante : " << std::endl;
         for (const auto& [haplotype, freq] : sorted_haplotypes) {
             for (int val : haplotype) {
