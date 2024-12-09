@@ -1,0 +1,8 @@
+Haplotype inféré : 1 0 0 (Fréquence : 0.333333) -> Distance minimale : 0
+Haplotype inféré : 1 0 1 (Fréquence : 0.166667) -> Distance minimale : 0
+Haplotype inféré : 1 1 1 (Fréquence : 0.166667) -> Distance minimale : 0
+Haplotype inféré : 0 1 0 (Fréquence : 0.333333) -> Distance minimale : 0
+Haplotype inféré : 0 1 1 (Fréquence : 0.333333) -> Distance minimale : 0
+Haplotype inféré : 1 1 0 (Fréquence : 0.333333) -> Distance minimale : 0
+Haplotype inféré : 0 0 1 (Fréquence : 0.166667) -> Distance minimale : 0
+Haplotype inféré : 0 0 0 (Fréquence : 0.166667) -> Distance minimale : 0
